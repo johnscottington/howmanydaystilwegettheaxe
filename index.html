@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>How Many Days Until We Get the Axe</title>
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: white;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    h1 {
+      font-size: 8vw;
+      font-weight: bold;
+      color: black;
+      text-align: center;
+      line-height: 1.2;
+      padding: 0 5vw;
+      white-space: pre-line;
+      z-index: 2;
+      position: relative;
+    }
+
+    .highlight {
+      color: black;
+      background-color: yellow;
+      font-weight: bold;
+      padding: 0 0.2em;
+      border-radius: 0.1em;
+    }
+
+    /* Confetti container */
+    .confetti {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: gold;
+      opacity: 0.8;
+      animation: fall 3s linear infinite;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-10px) rotate(0deg); }
+      100% { transform: translateY(100vh) rotate(360deg); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="confetti" id="confetti"></div>
+  <h1 id="countdown"></h1>
+
+  <script>
+    // ===== CONFIG =====
+    const nextBigGameDate = new Date("2026-11-21T12:00:00-08:00"); // kickoff time
+    const lastWinner = "Cal"; // "Cal" or "Stanford"
+    const gameResult = null; // Set to "win" or "lose" after the game
+    // ==================
+
+    function updateCountdown() {
+      const now = new Date();
+      const diffMs = nextBigGameDate - now;
+      const days = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+
+      const countdownEl = document.getElementById("countdown");
+
+      // Determine verb for normal countdown
+      const verb = lastWinner === "Cal" ? "keep" : "get";
+
+      // Post-game special cases
+      if (gameResult === "win") {
+        // Determine past-verb for win screen
+        const pastVerb = lastWinner === "Cal" ? "KEPT" : "GOT";
+        countdownEl.innerHTML = `GO BEARS! WE ${pastVerb} THE AXE`;
+        startConfetti();
+        return;
+      } else if (gameResult === "lose") {
+        countdownEl.innerHTML = `Go Bears :(\nOne more year 'til we get the axe...`;
+        return;
+      }
+
+      // Normal countdown
+      let text;
+      if (days === 0) {
+        text = `Go Bears!\nToday's the day that we ${verb} the axe!`;
+      } else if (days === 1) {
+        const highlighted = `<span class="highlight">one more day</span>`;
+        text = `Go Bears!\n${highlighted}\n'til we ${verb} the axe!`;
+      } else {
+        const highlighted = `<span class="highlight">${days} days</span>`;
+        text = `Go Bears!\n${highlighted}\n'til we ${verb} the axe!`;
+      }
+
+      countdownEl.innerHTML = text;
+    }
+
+    // ===== Confetti logic for win page =====
+    function startConfetti() {
+      const colors = ["#003262", "#FDB515"]; // Blue and Gold
+      const confettiContainer = document.getElementById("confetti");
+      for (let i = 0; i < 150; i++) {
+        const confetti = document.createElement("div");
+        confetti.classList.add("confetti-piece");
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.left = Math.random() * window.innerWidth + "px";
+        confetti.style.animationDuration = (2 + Math.random() * 3) + "s";
+        confetti.style.width = (5 + Math.random() * 10) + "px";
+        confetti.style.height = (5 + Math.random() * 10) + "px";
+        confettiContainer.appendChild(confetti);
+      }
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 60 * 1000); // update every minute
+  </script>
+</body>
+</html>
