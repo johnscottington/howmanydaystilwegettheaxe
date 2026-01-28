@@ -70,7 +70,7 @@
   <script>
     // ===== CONFIG =====
     const BIG_GAME_YEAR = 2026;
-    const BIG_GAME_MONTH = 10; // November (0-indexed)
+    const BIG_GAME_MONTH = 10;
     const BIG_GAME_DAY = 21;
 
     const lastWinner = "Stanford"; // "Cal" or "Stanford"
@@ -87,7 +87,7 @@
         now.getDate()
       );
 
-      // Local midnight game day (NO TIMEZONE ISSUES)
+
       const gameDay = new Date(
         BIG_GAME_YEAR,
         BIG_GAME_MONTH,
@@ -116,7 +116,7 @@
         return;
       }
 
-      // === BIG GAME DAY (TRIGGERS AT LOCAL MIDNIGHT) ===
+      // === BIG GAME DAY ===
       if (today.getTime() === gameDay.getTime()) {
         countdownEl.innerHTML =
           `Go Bears!\nToday's the day that we ${verb} the axe!`;
@@ -134,7 +134,7 @@
         `Go Bears!\n<span class="highlight">${days} days</span>\n'til we ${verb} the axe!`;
     }
 
-    // ===== Confetti logic =====
+    // ===== Confetti  =====
     function startConfetti() {
       const colors = ["#003262", "#FDB515"];
       const confettiContainer = document.getElementById("confetti");
