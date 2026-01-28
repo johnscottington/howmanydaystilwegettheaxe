@@ -36,7 +36,6 @@
       border-radius: 0.1em;
     }
 
-    /* Confetti container */
     .confetti {
       position: absolute;
       width: 100%;
@@ -70,7 +69,10 @@
 
   <script>
     // ===== CONFIG =====
-    const nextBigGameDate = new Date("2026-11-21T12:00:00-08:00"); // kickoff time
+    const BIG_GAME_YEAR = 2026;
+    const BIG_GAME_MONTH = 10; // November (0-indexed)
+    const BIG_GAME_DAY = 21;
+
     const lastWinner = "Stanford"; // "Cal" or "Stanford"
     const gameResult = null; // "win" | "lose" | null
     // ==================
@@ -78,20 +80,26 @@
     function updateCountdown() {
       const now = new Date();
 
-      // 🔒 MIDNIGHT-SAFE DATE NORMALIZATION (THE FIX)
-      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      const gameDay = new Date(
-        nextBigGameDate.getFullYear(),
-        nextBigGameDate.getMonth(),
-        nextBigGameDate.getDate()
+      // Local midnight today
+      const today = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate()
       );
 
-    const days = Math.max(
-  0,
-  Math.round((gameDay - today) / (1000 * 60 * 60 * 24))
-);
-      const countdownEl = document.getElementById("countdown");
+      // Local midnight game day (NO TIMEZONE ISSUES)
+      const gameDay = new Date(
+        BIG_GAME_YEAR,
+        BIG_GAME_MONTH,
+        BIG_GAME_DAY
+      );
 
+      const days =
+        Math.max(0, Math.round(
+          (gameDay - today) / (1000 * 60 * 60 * 24)
+        ));
+
+      const countdownEl = document.getElementById("countdown");
       const verb = lastWinner === "Cal" ? "keep" : "get";
 
       // === Post-game special cases ===
@@ -103,13 +111,15 @@
       }
 
       if (gameResult === "lose") {
-        countdownEl.innerHTML = `Go Bears :(\nOne more year 'til we get the axe...`;
+        countdownEl.innerHTML =
+          `Go Bears :(\nOne more year 'til we get the axe...`;
         return;
       }
 
       // === BIG GAME DAY (TRIGGERS AT LOCAL MIDNIGHT) ===
       if (today.getTime() === gameDay.getTime()) {
-        countdownEl.innerHTML = `Go Bears!\nToday's the day that we ${verb} the axe!`;
+        countdownEl.innerHTML =
+          `Go Bears!\nToday's the day that we ${verb} the axe!`;
         return;
       }
 
