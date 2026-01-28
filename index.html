@@ -69,57 +69,73 @@
   <h1 id="countdown"></h1>
 
   <script>
-// ===== CONFIG =====
-const nextBigGameDate = new Date("2026-11-21T12:00:00-08:00"); // kickoff time
-const lastWinner = "Stanford"; // "Cal" or "Stanford"
-const gameResult = null; // Set to "win" or "lose" after the game
-// ==================
+    // ===== CONFIG =====
+    const nextBigGameDate = new Date("2026-11-21T12:00:00-08:00"); // kickoff time
+    const lastWinner = "Stanford"; // "Cal" or "Stanford"
+    const gameResult = null; // "win" | "lose" | null
+    // ==================
 
     function updateCountdown() {
       const now = new Date();
+
+      // 🔒 MIDNIGHT-SAFE DATE NORMALIZATION (THE FIX)
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const gameDay = new Date(
+        nextBigGameDate.getFullYear(),
+        nextBigGameDate.getMonth(),
+        nextBigGameDate.getDate()
+      );
+
       const diffMs = nextBigGameDate - now;
-      const days = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+      const days = Math.max(
+        0,
+        Math.ceil(diffMs / (1000 * 60 * 60 * 24))
+      );
 
       const countdownEl = document.getElementById("countdown");
 
-      // Determine verb for normal countdown
       const verb = lastWinner === "Cal" ? "keep" : "get";
 
-      // Post-game special cases
+      // === Post-game special cases ===
       if (gameResult === "win") {
-        // Determine past-verb for win screen
         const pastVerb = lastWinner === "Cal" ? "KEPT" : "GOT";
         countdownEl.innerHTML = `GO BEARS! WE ${pastVerb} THE AXE`;
         startConfetti();
         return;
-      } else if (gameResult === "lose") {
+      }
+
+      if (gameResult === "lose") {
         countdownEl.innerHTML = `Go Bears :(\nOne more year 'til we get the axe...`;
         return;
       }
 
-      // Normal countdown
-      let text;
-      if (days === 0) {
-        text = `Go Bears!\nToday's the day that we ${verb} the axe!`;
-      } else if (days === 1) {
-        const highlighted = `<span class="highlight">one more day</span>`;
-        text = `Go Bears!\n${highlighted}\n'til we ${verb} the axe!`;
-      } else {
-        const highlighted = `<span class="highlight">${days} days</span>`;
-        text = `Go Bears!\n${highlighted}\n'til we ${verb} the axe!`;
+      // === BIG GAME DAY (TRIGGERS AT LOCAL MIDNIGHT) ===
+      if (today.getTime() === gameDay.getTime()) {
+        countdownEl.innerHTML = `Go Bears!\nToday's the day that we ${verb} the axe!`;
+        return;
       }
 
-      countdownEl.innerHTML = text;
+      // === Normal countdown ===
+      if (days === 1) {
+        countdownEl.innerHTML =
+          `Go Bears!\n<span class="highlight">one more day</span>\n'til we ${verb} the axe!`;
+        return;
+      }
+
+      countdownEl.innerHTML =
+        `Go Bears!\n<span class="highlight">${days} days</span>\n'til we ${verb} the axe!`;
     }
 
-    // ===== Confetti logic for win page =====
+    // ===== Confetti logic =====
     function startConfetti() {
-      const colors = ["#003262", "#FDB515"]; // Blue and Gold
+      const colors = ["#003262", "#FDB515"];
       const confettiContainer = document.getElementById("confetti");
+
       for (let i = 0; i < 150; i++) {
         const confetti = document.createElement("div");
         confetti.classList.add("confetti-piece");
-        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.backgroundColor =
+          colors[Math.floor(Math.random() * colors.length)];
         confetti.style.left = Math.random() * window.innerWidth + "px";
         confetti.style.animationDuration = (2 + Math.random() * 3) + "s";
         confetti.style.width = (5 + Math.random() * 10) + "px";
@@ -129,7 +145,7 @@ const gameResult = null; // Set to "win" or "lose" after the game
     }
 
     updateCountdown();
-    setInterval(updateCountdown, 1000); 
+    setInterval(updateCountdown, 1000);
   </script>
 </body>
 </html>
