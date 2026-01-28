@@ -86,12 +86,10 @@
         nextBigGameDate.getDate()
       );
 
-      const diffMs = nextBigGameDate - now;
-      const days = Math.max(
-        0,
-        Math.ceil(diffMs / (1000 * 60 * 60 * 24))
-      );
-
+    const days = Math.max(
+  0,
+  Math.round((gameDay - today) / (1000 * 60 * 60 * 24))
+);
       const countdownEl = document.getElementById("countdown");
 
       const verb = lastWinner === "Cal" ? "keep" : "get";
